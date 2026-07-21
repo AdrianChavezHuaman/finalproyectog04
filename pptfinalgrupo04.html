@@ -1,1 +1,1161 @@
-a
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Áreas Verdes – I.E. 7216 Villa de Jesús</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        /* Reset y variables */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #eaf5e9;
+            --surface: rgba(255, 255, 255, 0.8);
+            --text: #1a2e1a;
+            --text-soft: #3d5a3d;
+            --accent: #2e7d32;
+            --accent-light: #c8e6c9;
+            --accent-dark: #1b5e20;
+            --accent-glow: #66bb6a;
+            --radius: 28px;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            --modal-bg: rgba(0, 0, 0, 0.5);
+            --nav-bg: rgba(255, 255, 255, 0.5);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            line-height: 1.6;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.06"><path d="M0,0 L1000,0 L1000,1000 L0,1000 Z" fill="none"/><path d="M150,150 Q250,50 350,150 T550,150 T750,150 T950,150" stroke="%232e7d32" stroke-width="2" fill="none"/><path d="M100,300 Q200,200 300,300 T500,300 T700,300 T900,300" stroke="%232e7d32" stroke-width="2" fill="none"/><path d="M50,450 Q150,350 250,450 T450,450 T650,450 T850,450" stroke="%232e7d32" stroke-width="2" fill="none"/><path d="M200,600 Q300,500 400,600 T600,600 T800,600 T1000,600" stroke="%232e7d32" stroke-width="2" fill="none"/><path d="M250,750 Q350,650 450,750 T650,750 T850,750 T1050,750" stroke="%232e7d32" stroke-width="2" fill="none"/></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+        .dashboard {
+            width: 100%;
+            max-width: 1300px;
+            height: 94vh;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(46, 125, 50, 0.15);
+        }
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.9rem 1.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--text-soft);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            position: relative;
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid transparent;
+        }
+        .nav-btn:hover {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--accent-dark);
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.35);
+            transform: translateY(-2px);
+        }
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 20%;
+            width: 60%;
+            height: 3px;
+            background: var(--accent-glow);
+            border-radius: 3px;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem 2.5rem;
+            scroll-behavior: smooth;
+        }
+        .panel {
+            display: none;
+            animation: fadeSlideIn 0.45s ease;
+        }
+        .panel.active { display: block; }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 1.2rem;
+            border-bottom: 4px solid var(--accent-light);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--accent-dark);
+            margin-bottom: 0.6rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid rgba(46, 125, 50, 0.08);
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+        .card:hover {
+            background: rgba(255, 255, 255, 0.92);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            border-color: var(--accent);
+        }
+        .card a {
+            color: var(--accent-dark);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dotted var(--accent);
+        }
+        .card a:hover { color: var(--accent); }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 1.2rem 0;
+        }
+        .metric {
+            background: linear-gradient(145deg, #ffffff, #f1f8e9);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            text-align: center;
+            border: 1px solid rgba(46, 125, 50, 0.15);
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+        .metric:hover {
+            transform: scale(1.04);
+            border-color: var(--accent);
+        }
+        .metric .number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .metric .label {
+            color: var(--text-soft);
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+        }
+
+        /* ========== CONTENEDORES DE IMAGEN ========== */
+        .img-fixed {
+            width: 100%;
+            background: #f0f4f0;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0.5rem 0;
+            transition: 0.3s;
+            border: 2px dashed rgba(46, 125, 50, 0.2);
+        }
+        .img-fixed:hover {
+            border-color: var(--accent);
+            background: #e8f5e9;
+        }
+        .img-fixed img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        /* Clases con aspect-ratio específicas para cada imagen */
+        .img-fixed.aspect-1-417 {
+            height: auto;
+            aspect-ratio: 803 / 567;
+        }
+        .img-fixed.aspect-887-665 {
+            height: auto;
+            aspect-ratio: 887 / 665;
+        }
+        .img-fixed.aspect-887-593 {
+            height: auto;
+            aspect-ratio: 887 / 593;
+        }
+        .img-fixed.aspect-887-1183 {
+            height: auto;
+            aspect-ratio: 887 / 1183;
+        }
+
+        /* Para las imágenes en modales, queremos que se adapten sin espacios */
+        .modal-box .img-fixed {
+            height: auto;
+            aspect-ratio: auto;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin: 0.3rem 0;
+        }
+        .modal-box .img-fixed img {
+            object-fit: contain;
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            border-radius: var(--radius);
+        }
+
+        /* Galería horizontal */
+        .galeria-horizontal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .galeria-horizontal .img-fixed {
+            height: auto;
+            aspect-ratio: 4 / 3;
+            background: #f0f4f0;
+            border-radius: var(--radius);
+            border: 2px dashed rgba(46, 125, 50, 0.2);
+            overflow: hidden;
+        }
+        .galeria-horizontal .img-fixed img {
+            object-fit: cover;
+        }
+
+        /* Modales: comparativa, gráficos, alumnos, etc. */
+        .comparativa-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+        .comparativa-col {
+            text-align: center;
+        }
+        .comparativa-col h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .comparativa-col .img-fixed {
+            height: auto;
+            aspect-ratio: 4 / 3;
+            margin-bottom: 0.5rem;
+        }
+
+        .graficos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .graficos-grid .img-fixed {
+            height: auto;
+            aspect-ratio: 4 / 3;
+            min-height: 200px;
+            border: 2px dashed rgba(46, 125, 50, 0.2);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #f0f4f0;
+        }
+        .graficos-grid .img-fixed img {
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Contenedor para video de YouTube */
+        .video-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #000;
+            margin: 0.5rem 0;
+        }
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Botones */
+        .btn-modal {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 14px rgba(46, 125, 50, 0.25);
+        }
+        .btn-modal:hover {
+            background: var(--accent-dark);
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.35);
+        }
+        .btn-modal-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            padding: 0.5rem 1.6rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .btn-modal-outline:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.04);
+        }
+        .btn-modal-small {
+            background: transparent;
+            color: var(--accent-dark);
+            border: 1px solid var(--accent);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .btn-modal-small:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            border-radius: var(--radius);
+            padding: 2.2rem;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            position: relative;
+            animation: modalIn 0.3s ease;
+            border: 1px solid rgba(46, 125, 50, 0.15);
+        }
+        .modal-box.wide { max-width: 1000px; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.94) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-box .close {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #f0f0f0;
+            border: none;
+            font-size: 1.8rem;
+            line-height: 1;
+            padding: 0 0.8rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 0.5rem;
+        }
+        .modal-box .close:hover { background: #ddd; }
+        .modal-box h3 { margin-top: 0; }
+
+        /* Integrantes */
+        .integrantes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .integrante {
+            text-align: center;
+        }
+        .integrante .foto {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            margin: 0 auto 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--accent);
+            border: 3px solid var(--accent);
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .integrante .foto:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-glow);
+        }
+        .integrante .foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .integrante .nombre {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .tabla-compacta {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+        .tabla-compacta th,
+        .tabla-compacta td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .tabla-compacta th {
+            background: var(--accent-light);
+            color: var(--accent-dark);
+            font-weight: 600;
+        }
+
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 1.5rem; }
+        .text-muted { color: var(--text-soft); }
+        .highlight { color: var(--accent); font-weight: 600; }
+        .flex-center { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        ul { margin-left: 1.2rem; }
+        li { margin-bottom: 0.3rem; }
+
+        @media (max-width: 768px) {
+            .top-nav { gap: 0.3rem; padding: 0.6rem 0.8rem; }
+            .nav-btn { padding: 0.3rem 0.8rem; font-size: 0.75rem; }
+            .grid, .metrics, .galeria-horizontal, .comparativa-grid, .graficos-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2rem; }
+            .content-area { padding: 1.2rem; }
+            .modal-box { width: 95%; padding: 1.5rem; }
+            .dashboard { height: 96vh; border-radius: 20px; }
+            .graficos-grid .img-fixed { min-height: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- NAVEGACIÓN -->
+        <nav class="top-nav">
+            <button class="nav-btn active" data-panel="inicio">🏠 Inicio</button>
+            <button class="nav-btn" data-panel="problema">🔍 Problema</button>
+            <button class="nav-btn" data-panel="marco">📜 Marco Legal</button>
+            <button class="nav-btn" data-panel="objetivos">🎯 Objetivos</button>
+            <button class="nav-btn" data-panel="ejecucion">📅 Ejecución</button>
+            <button class="nav-btn" data-panel="ods">🌍 ODS</button>
+            <button class="nav-btn" data-panel="beneficios">🌿 Beneficios</button>
+            <button class="nav-btn" data-panel="resultados">📊 Resultados</button>
+            <button class="nav-btn" data-panel="conclusiones">✅ Conclusiones</button>
+            <button class="nav-btn" data-panel="referencias">📚 Ref.</button>
+        </nav>
+
+        <div class="content-area">
+            <!-- PANEL INICIO -->
+            <div class="panel active" id="panel-inicio">
+                <div class="text-center">
+                    <h1>🌱 Implementación de Áreas Verdes</h1>
+                    <p style="font-size: 1.2rem; color: var(--text-soft); font-weight: 500;">I.E. 7216 "Villa de Jesús" – Villa El Salvador, Lima</p>
+                    <p style="font-size: 0.95rem; color: var(--text-soft); margin-top: 0.2rem;">Curso: Cambio Global y Sostenibilidad | 2026</p>
+                    <div style="margin-top: 1.2rem;">
+                        <button class="btn-modal" onclick="abrirModal('modal-integrantes')">👥 Integrantes</button>
+                    </div>
+                </div>
+                <div class="grid mt-2">
+                    <div class="card">
+                        <h3>🌍 Cambio Global</h3>
+                        <p>Alteraciones ambientales por actividades humanas.</p>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-cambio')">Ver más</button>
+                    </div>
+                    <div class="card">
+                        <h3>🏫 Diagnóstico Local</h3>
+                        <p>Predominio de concreto, falta de vegetación y efecto "isla de calor".</p>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-diagnostico')">Ver más</button>
+                    </div>
+                </div>
+                <div class="text-center mt-2 text-muted" style="font-size: 0.95rem;">
+                    <strong>Docente:</strong> Hipólito César Vilca Panti
+                </div>
+                <!-- IMAGEN 1: Entrada del colegio -->
+                <div class="img-fixed aspect-1-417 mt-2">
+                    <img src="https://adrianchavezhuaman.github.io/finalproyectog04/1.png" alt="Imagen 1: Entrada del colegio">
+                </div>
+            </div>
+
+            <!-- PANEL PROBLEMA -->
+            <div class="panel" id="panel-problema">
+                <h2>1. Diagnóstico de la Problemática</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>🔍 Situación Actual</h3>
+                        <ul>
+                            <li>Predominio de concreto y tierra expuesta.</li>
+                            <li>Polvo constante y falta de sombra.</li>
+                            <li>Escasa infraestructura ecológica (ONU-Hábitat, 2022).</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-problema-detalle')">📋 Más detalles</button>
+                    </div>
+                    <div class="card">
+                        <h3>⚠️ Consecuencias</h3>
+                        <ul>
+                            <li>Sensación térmica elevada (+5°C).</li>
+                            <li>Riesgos respiratorios y menor bienestar (OMS, 2023).</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-consecuencias')">📋 Ver impacto</button>
+                    </div>
+                </div>
+                <!-- IMAGEN 2: Antes – sin vegetación -->
+                <div class="img-fixed aspect-887-665 mt-2">
+                    <img src="https://adrianchavezhuaman.github.io/finalproyectog04/2.jpeg" alt="Imagen 2: Antes – sin vegetación">
+                </div>
+            </div>
+
+            <!-- PANEL MARCO LEGAL -->
+            <div class="panel" id="panel-marco">
+                <h2>2. Marco Normativo Ambiental</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>📜 Ley General del Ambiente</h3>
+                        <p><strong>N.° 28611</strong> – Derecho a un ambiente saludable.</p>
+                        <a href="https://leyes.congreso.gob.pe/Documentos/Leyes/28611.pdf" target="_blank">Ver texto completo (PDF)</a>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-ley-detalle')">📖 Resumen</button>
+                    </div>
+                    <div class="card">
+                        <h3>🌐 Política Nacional del Ambiente</h3>
+                        <p>Entornos educativos saludables y ciudadanía ambiental.</p>
+                        <a href="https://www.gob.pe/institucion/minam/campanas/2041-politica-nacional-del-ambiente" target="_blank">Conoce la Política al 2030 (MINAM)</a>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-politica-detalle')">📖 Extracto</button>
+                    </div>
+                </div>
+                <!-- IMAGEN 3: MINAM / Marco legal -->
+                <div class="img-fixed aspect-887-593 mt-2">
+                    <img src="https://adrianchavezhuaman.github.io/finalproyectog04/3.png" alt="Imagen 3: MINAM / Marco legal">
+                </div>
+            </div>
+
+            <!-- PANEL OBJETIVOS -->
+            <div class="panel" id="panel-objetivos">
+                <h2>3. Objetivos del Proyecto</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>🎯 Objetivo General</h3>
+                        <p>Implementar <span class="highlight">2 áreas verdes sostenibles</span> en la I.E. 7216 durante 2026, mediante la participación activa de la comunidad educativa.</p>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-og-detalle')">📌 Ver alcance</button>
+                    </div>
+                    <div class="card">
+                        <h3>📋 Objetivos Específicos</h3>
+                        <ul>
+                            <li>Diagnosticar condiciones ambientales.</li>
+                            <li>Sensibilizar al 80% de la comunidad.</li>
+                            <li>Diseñar e implementar los 2 espacios.</li>
+                            <li>Promover participación en actividades.</li>
+                            <li>Evaluar el impacto ambiental y educativo.</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-oe-detalle')">📌 Detalle</button>
+                    </div>
+                </div>
+                <!-- Botón de más imágenes de alumnos, ahora ANTES de la imagen -->
+                <div class="text-center mb-2">
+                    <button class="btn-modal" onclick="abrirModal('modal-mas-alumnos')">📸 Más imágenes de alumnos</button>
+                </div>
+                <!-- IMAGEN 4: Estudiantes sembrando -->
+                <div class="img-fixed aspect-887-665 mt-2">
+                    <img src="https://adrianchavezhuaman.github.io/finalproyectog04/4.jpeg" alt="Imagen 4: Estudiantes sembrando">
+                </div>
+            </div>
+
+            <!-- PANEL EJECUCIÓN -->
+            <div class="panel" id="panel-ejecucion">
+                <h2>4. Planificación y Ejecución</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>📅 Fases</h3>
+                        <ul>
+                            <li><strong>Diagnóstico:</strong> Evaluación del suelo.</li>
+                            <li><strong>Sensibilización:</strong> Charlas ambientales.</li>
+                            <li><strong>Ejecución:</strong> Limpieza, abonado y siembra.</li>
+                            <li><strong>Participación:</strong> Trabajo en equipo.</li>
+                            <li><strong>Monitoreo:</strong> Seguimiento y encuestas.</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-fases-detalle')">⏳ Cronograma</button>
+                    </div>
+                    <div class="card">
+                        <h3>🛠️ Herramientas</h3>
+                        <ul>
+                            <li>Diagrama de Gantt.</li>
+                            <li>Encuestas de percepción.</li>
+                            <li>Registro fotográfico.</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-herramientas')">🔧 Ver instrumentos</button>
+                    </div>
+                </div>
+                <!-- IMAGEN 5: Durante – preparación y siembra -->
+                <div class="img-fixed aspect-887-1183 mt-2">
+                    <img src="https://adrianchavezhuaman.github.io/finalproyectog04/5.png" alt="Imagen 5: Durante – preparación y siembra">
+                </div>
+            </div>
+
+            <!-- PANEL ODS -->
+            <div class="panel" id="panel-ods">
+                <h2>5. Alineación con los ODS</h2>
+                <div class="grid">
+                    <div class="card text-center">
+                        <div style="font-size: 2.8rem;">📚</div>
+                        <h3>ODS 4</h3>
+                        <p>Educación de Calidad</p>
+                        <a href="https://sdgs.un.org/goals/goal4" target="_blank">Más info</a>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-ods4')">📖 Relación</button>
+                    </div>
+                    <div class="card text-center">
+                        <div style="font-size: 2.8rem;">🏙️</div>
+                        <h3>ODS 11</h3>
+                        <p>Ciudades Sostenibles</p>
+                        <a href="https://sdgs.un.org/goals/goal11" target="_blank">Más info</a>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-ods11')">📖 Relación</button>
+                    </div>
+                    <div class="card text-center">
+                        <div style="font-size: 2.8rem;">🌡️</div>
+                        <h3>ODS 13</h3>
+                        <p>Acción por el Clima</p>
+                        <a href="https://sdgs.un.org/goals/goal13" target="_blank">Más info</a>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-ods13')">📖 Relación</button>
+                    </div>
+                    <div class="card text-center">
+                        <div style="font-size: 2.8rem;">🐝</div>
+                        <h3>ODS 15</h3>
+                        <p>Vida de Ecosistemas</p>
+                        <a href="https://sdgs.un.org/goals/goal15" target="_blank">Más info</a>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-ods15')">📖 Relación</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL BENEFICIOS -->
+            <div class="panel" id="panel-beneficios">
+                <h2>6. Beneficios del Proyecto</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>🌿 Ambientales</h3>
+                        <ul>
+                            <li>Purificación del aire y captura de polvo.</li>
+                            <li>Regulación de temperatura.</li>
+                            <li>Biodiversidad urbana (OMS, 2023).</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-beneficios-ambientales')">🌳 Más info</button>
+                    </div>
+                    <div class="card">
+                        <h3>👥 Sociales y Educativos</h3>
+                        <ul>
+                            <li>Reducción del estrés.</li>
+                            <li>Trabajo en equipo y responsabilidad.</li>
+                            <li>Espacios para clases prácticas.</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-beneficios-sociales')">👩‍🏫 Más info</button>
+                    </div>
+                </div>
+                <!-- GALERÍA HORIZONTAL: Antes/Después -->
+                <div class="galeria-horizontal">
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/antes1.png" alt="Antes 1"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/antes2.png" alt="Antes 2"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/despues1.png" alt="Después 1"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/despues2.png" alt="Después 2"></div>
+                </div>
+            </div>
+
+            <!-- PANEL RESULTADOS -->
+            <div class="panel" id="panel-resultados">
+                <h2>7. Resultados y Evidencias</h2>
+                <div class="metrics">
+                    <div class="metric"><div class="number">2</div><div class="label">Áreas verdes acondicionadas</div></div>
+                    <div class="metric"><div class="number">80%</div><div class="label">Participación en charlas</div></div>
+                    <div class="metric"><div class="number">100%</div><div class="label">Actividades completadas</div></div>
+                </div>
+                <div class="text-center flex-center">
+                    <button class="btn-modal" onclick="abrirModal('modal-comparativa')">📸 Ver Antes / Después</button>
+                    <button class="btn-modal" onclick="abrirModal('modal-graficos')">📊 Gráficos encuesta</button>
+                    <button class="btn-modal" onclick="abrirModal('modal-flujo')">🔄 Diagrama de flujo</button>
+                </div>
+                <div class="mt-2">
+                    <h3>🎬 Video Documental</h3>
+                    <!-- VIDEO 1: Reemplaza el ID (rRdKt9CKeGM) por el tuyo -->
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/rRdKt9CKeGM" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL CONCLUSIONES -->
+            <div class="panel" id="panel-conclusiones">
+                <h2>8. Conclusiones y Recomendaciones</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>✅ Conclusiones</h3>
+                        <ul>
+                            <li>Se cumplió el objetivo: 2 áreas verdes creadas.</li>
+                            <li>Mejora de la calidad ambiental.</li>
+                            <li>Conciencia ambiental fortalecida.</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-conclusiones-detalle')">📌 Reflexión</button>
+                    </div>
+                    <div class="card">
+                        <h3>💡 Recomendaciones</h3>
+                        <ul>
+                            <li>Comités estudiantiles para riego.</li>
+                            <li>Campañas periódicas.</li>
+                            <li>Replicar en otros espacios.</li>
+                        </ul>
+                        <button class="btn-modal-small" onclick="abrirModal('modal-recomendaciones-detalle')">📌 Ampliar</button>
+                    </div>
+                </div>
+                <p class="text-center mt-2" style="font-style: italic; font-size: 1.2rem; color: var(--accent-dark);">
+                    "Sembrar una planta es sembrar conciencia."
+                </p>
+                <!-- VIDEO 2 (reemplaza la imagen 8): Reemplaza el ID (0uxRIzQuQRE) por el tuyo -->
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/0uxRIzQuQRE" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- PANEL REFERENCIAS -->
+            <div class="panel" id="panel-referencias">
+                <h2>📚 Referencias Bibliográficas (APA 7)</h2>
+                <div class="card">
+                    <ul style="list-style: none; padding: 0; line-height: 1.9;">
+                        <li>Brunetti, K. (2023). <em>Green schools: Transformando la educación...</em> <a href="https://katiabrunetti2.medium.com/green-schools-transformando-la-educaci%C3%B3n-para-salvar-el-planeta-7cdf2affdaf7" target="_blank">Medium</a></li>
+                        <li>Cabrera Silva, S. (2021). Cambio global: una mirada desde la biología. <a href="https://www.scielo.cl/scielo.php?pid=S0717-73482019000100009&script=sci_arttext" target="_blank">Rev. Chil. Enf. Respir.</a></li>
+                        <li>Centro de Cambio Global UC. (s.f.). <a href="https://www.cambioglobal.uc.cl" target="_blank">¿Qué es el cambio global?</a></li>
+                        <li>El Nacional. (2026). Importancia de las escuelas verdes. <a href="https://www.elnacional.com/2026/02/importancia-de-las-escuelas-verdes/" target="_blank">El Nacional</a></li>
+                        <li>FAO. (2022). <a href="https://www.fao.org/state-of-forests/2022/en" target="_blank">The State of the World's Forests 2022</a></li>
+                        <li>IPCC. (2023). <a href="https://www.ipcc.ch/report/ar6/syr/" target="_blank">Cambio climático 2023: Informe de síntesis</a></li>
+                        <li>ISGlobal. (2021). <a href="https://www.isglobal.org/healthisglobal/-/custom-blog-portlet/why-more-green-space-is-essential-for-cities" target="_blank">Why more green space is essential for cities</a></li>
+                        <li>MINAM. (2023). <a href="https://www.gob.pe/institucion/minam/campanas/2041-politica-nacional-del-ambiente" target="_blank">Política Nacional del Ambiente al 2030</a></li>
+                        <li>Ministerio del Ambiente. (2021). <em>Aprueban la Política Nacional del Ambiente al 2030 – Decreto Supremo N° 023-2021-MINAM</em>. <a href="https://iuslatin.pe/aprueban-la-politica-nacional-del-ambiente-al-2030-ds-n-023-2021-minam/" target="_blank">https://iuslatin.pe/aprueban-la-politica-nacional-del-ambiente-al-2030-ds-n-023-2021-minam/</a></li>
+                        <li>ONU. (2024). <a href="https://unstats.un.org/sdgs/report/2024/" target="_blank">The Sustainable Development Goals Report 2024</a></li>
+                        <li>ONU-Hábitat. (2022). <a href="https://onu-habitat.org/index.php/el-espacio-publico-componente-clave-de-una-ciudad-sostenible" target="_blank">El espacio público: componente clave de una ciudad sostenible</a></li>
+                        <li>OMS. (2023). <a href="https://climate-adapt.eea.europa.eu/es/metadata/publications/WHO-europe-report-on-valuing-urban-green-blue-spaces-for-health-wellbeing" target="_blank">Urban green and blue spaces and health</a></li>
+                        <li>PNUMA. (2023). <a href="https://www.unep.org/es/resources/emissions-gap-report-2023" target="_blank">Informe sobre la brecha de emisiones 2023</a></li>
+                        <li>PNUMA. (2024). <a href="https://www.unep.org/es/resources/Global-Resource-Outlook-2024" target="_blank">Panorama de los Recursos Globales 2024</a></li>
+                        <li>UNESCO. (2023). <a href="https://unesdoc.unesco.org/ark:/48223/pf0000386206" target="_blank">Greening every school</a></li>
+                        <li>UNESCO. (2026). <a href="https://www.unesco.org/es/sustainable-development/education/greening-future" target="_blank">Alianza para una Educación Verde</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== MODALES ================== -->
+
+    <!-- Modal: Cambio Global -->
+    <div class="modal-overlay" id="modal-cambio">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-cambio')">&times;</button>
+            <h3>🌍 Cambio Global</h3>
+            <p>El cambio global no solo afecta el clima, sino también la salud humana, la disponibilidad de agua y la seguridad alimentaria. Según el IPCC (2023), las ciudades son responsables del 70% de las emisiones globales, por lo que acciones locales como la creación de áreas verdes son fundamentales para la adaptación.</p>
+            <p>En Villa El Salvador, la falta de áreas verdes agrava el efecto de isla de calor y contribuye a la contaminación del aire, afectando especialmente a poblaciones vulnerables como niños y adultos mayores.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Diagnóstico Local -->
+    <div class="modal-overlay" id="modal-diagnostico">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-diagnostico')">&times;</button>
+            <h3>🏫 Diagnóstico Local</h3>
+            <p>El diagnóstico participativo incluyó observación directa, medición de temperatura en diferentes zonas del colegio y encuestas a estudiantes y docentes. Se identificaron tres zonas con potencial para intervención:</p>
+            <ul>
+                <li><strong>Zona 1:</strong> Patio principal (alta exposición solar).</li>
+                <li><strong>Zona 2:</strong> Área trasera (tierra compactada).</li>
+                <li><strong>Zona 3:</strong> Entrada principal (espacio subutilizado).</li>
+            </ul>
+            <p>Finalmente se seleccionaron las zonas 1 y 2 por su accesibilidad y mayor impacto visual y ambiental.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Problema Detalle -->
+    <div class="modal-overlay" id="modal-problema-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-problema-detalle')">&times;</button>
+            <h3>📋 Datos complementarios</h3>
+            <p>Según el estudio de ISGlobal (2021), los espacios verdes en colegios mejoran la capacidad de atención y reducen los niveles de cortisol en estudiantes. En la I.E. 7216, se registró que el 65% de los estudiantes pasa más de 4 horas diarias en ambientes sin áreas verdes.</p>
+            <p>Además, el suelo predominante es de tipo arenoso con baja retención de humedad, lo que dificulta la vegetación espontánea y requiere de un diseño cuidadoso para la siembra.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Consecuencias -->
+    <div class="modal-overlay" id="modal-consecuencias">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-consecuencias')">&times;</button>
+            <h3>⚠️ Impacto en la salud y bienestar</h3>
+            <p>La OMS (2023) señala que la falta de espacios verdes se asocia con un aumento del 12% en trastornos respiratorios en niños. En el colegio, el 40% de los docentes reportó síntomas de fatiga y estrés relacionados con el ambiente térmico.</p>
+            <p>Las altas temperaturas también afectan el rendimiento académico: se ha documentado que por cada grado adicional por encima de 24°C, la concentración disminuye en un 5%.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Ley General del Ambiente -->
+    <div class="modal-overlay" id="modal-ley-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-ley-detalle')">&times;</button>
+            <h3>📜 Ley N.° 28611 – Aportes</h3>
+            <p>Esta ley no solo garantiza el derecho a un ambiente sano, sino que también promueve la educación ambiental y la participación ciudadana en la gestión ambiental. El artículo 15° establece que las instituciones educativas deben incorporar la educación ambiental en sus planes de estudio.</p>
+            <p>El proyecto se alinea con esta disposición al integrar actividades prácticas de siembra y monitoreo que involucran a toda la comunidad educativa.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Política Nacional del Ambiente -->
+    <div class="modal-overlay" id="modal-politica-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-politica-detalle')">&times;</button>
+            <h3>🌐 Política Nacional del Ambiente al 2030</h3>
+            <p>Esta política prioriza la recuperación de espacios degradados y la promoción de infraestructura verde en zonas urbanas. El objetivo específico 2.1 busca "incrementar la cobertura de áreas verdes en los centros poblados", lo que respalda directamente la intervención en el colegio.</p>
+            <p>Además, fomenta la articulación entre instituciones educativas y gobiernos locales para la gestión ambiental compartida.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Objetivo General -->
+    <div class="modal-overlay" id="modal-og-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-og-detalle')">&times;</button>
+            <h3>🎯 Alcance del Objetivo General</h3>
+            <p>La implementación de las dos áreas verdes implicó:</p>
+            <ul>
+                <li>Selección de especies nativas resistentes a la sequía.</li>
+                <li>Preparación del suelo con compost y abono orgánico.</li>
+                <li>Diseño participativo con estudiantes y docentes.</li>
+            </ul>
+            <p>El área total intervenida fue de <strong>80 m²</strong> aproximadamente, beneficiando a más de <strong>300 estudiantes</strong>.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Objetivos Específicos -->
+    <div class="modal-overlay" id="modal-oe-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-oe-detalle')">&times;</button>
+            <h3>📋 Detalle de actividades</h3>
+            <ul>
+                <li><strong>Diagnóstico:</strong> 3 visitas técnicas, medición de pH del suelo y encuesta a 60 personas.</li>
+                <li><strong>Sensibilización:</strong> 4 talleres con participación del 80% de la comunidad.</li>
+                <li><strong>Implementación:</strong> Se sembraron 50 plantas.</li>
+                <li><strong>Participación:</strong> 3 jornadas de siembra y mantenimiento.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal: Fases - Cronograma -->
+    <div class="modal-overlay" id="modal-fases-detalle">
+        <div class="modal-box wide">
+            <button class="close" onclick="cerrarModal('modal-fases-detalle')">&times;</button>
+            <h3>⏳ Cronograma de Actividades</h3>
+            <div class="img-fixed" style="height: auto; aspect-ratio: 16/9; max-height: 60vh;">
+                <img src="https://adrianchavezhuaman.github.io/finalproyectog04/cronograma.png" alt="Diagrama de Gantt" style="width:100%; height:100%; object-fit:contain;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Herramientas -->
+    <div class="modal-overlay" id="modal-herramientas">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-herramientas')">&times;</button>
+            <h3>🛠️ Instrumentos utilizados</h3>
+            <ul>
+                <li><strong>Diagrama de Gantt:</strong> Planificación semanal con hitos claros.</li>
+                <li><strong>Encuestas:</strong> Cuestionario de 10 preguntas sobre percepción ambiental y satisfacción.</li>
+                <li><strong>Fichas de seguimiento:</strong> Registro de altura, número de hojas y estado general de las plantas.</li>
+                <li><strong>Cámara fotográfica:</strong> Registro visual de todo el proceso.</li>
+                <li><strong>Termómetro ambiental:</strong> Medición de temperatura antes y después de la intervención.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modales ODS -->
+    <div class="modal-overlay" id="modal-ods4">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-ods4')">&times;</button>
+            <h3>📚 ODS 4 – Educación de Calidad</h3>
+            <p>El proyecto incorpora la educación ambiental como eje transversal, desarrollando competencias científicas, ciudadanas y socioemocionales. Los estudiantes aprenden sobre ciclos biogeoquímicos, biodiversidad y gestión de recursos.</p>
+            <p>Se promueve el aprendizaje basado en proyectos, donde los alumnos son protagonistas de la transformación de su entorno.</p>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modal-ods11">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-ods11')">&times;</button>
+            <h3>🏙️ ODS 11 – Ciudades Sostenibles</h3>
+            <p>La creación de áreas verdes en el colegio contribuye a la meta de proporcionar acceso universal a espacios verdes públicos. Además, reduce la vulnerabilidad ante olas de calor y mejora la calidad del aire en el distrito.</p>
+            <p>El proyecto sirve como modelo para otras instituciones educativas de la zona.</p>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modal-ods13">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-ods13')">&times;</button>
+            <h3>🌡️ ODS 13 – Acción por el Clima</h3>
+            <p>Las áreas verdes actúan como sumideros de carbono y reducen la temperatura local en hasta 3°C. También aumentan la resiliencia de la comunidad frente a eventos climáticos extremos, como sequías o lluvias intensas.</p>
+            <p>El proyecto sensibiliza sobre la importancia de las soluciones basadas en la naturaleza.</p>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modal-ods15">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-ods15')">&times;</button>
+            <h3>🐝 ODS 15 – Vida de Ecosistemas</h3>
+            <p>La siembra de especies nativas contribuye a la recuperación de la biodiversidad urbana, atrayendo polinizadores y aves. Se promueve la conservación de la flora local y se evita el uso de especies invasoras.</p>
+            <p>El proyecto también incluye actividades de compostaje que reducen los residuos orgánicos.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Beneficios Ambientales -->
+    <div class="modal-overlay" id="modal-beneficios-ambientales">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-beneficios-ambientales')">&times;</button>
+            <h3>🌿 Beneficios Ambientales – Datos</h3>
+            <ul>
+                <li>Captura estimada de CO₂: 50 kg/mes en las dos áreas.</li>
+                <li>Reducción de temperatura superficial: 2.5°C en promedio.</li>
+                <li>Aumento de humedad relativa: 8% en las zonas intervenidas.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal: Beneficios Sociales -->
+    <div class="modal-overlay" id="modal-beneficios-sociales">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-beneficios-sociales')">&times;</button>
+            <h3>👥 Beneficios Sociales – Testimonios</h3>
+            <ul>
+                <li><em>"Ahora tenemos un lugar bonito para regar y ver."</em> – Estudiante de 5to grado primaria.</li>
+                <li><em>"Los alumnos están más motivados y participan con entusiasmo."</em> – Docente de ciencias.</li>
+                <li><em>"El colegio se ve más alegre y acogedor."</em> – Personal administrativo.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal: Comparativa Antes / Después -->
+    <div class="modal-overlay" id="modal-comparativa">
+        <div class="modal-box wide">
+            <button class="close" onclick="cerrarModal('modal-comparativa')">&times;</button>
+            <h3>📸 Antes y Después del Proyecto</h3>
+            <div class="comparativa-grid">
+                <div class="comparativa-col">
+                    <h4>❌ Antes</h4>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/zona1-antes.png" alt="Zona 1 – Antes"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/zona2-antes.png" alt="Zona 2 – Antes"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/zona3-antes.png" alt="Zona 3 – Antes"></div>
+                </div>
+                <div class="comparativa-col">
+                    <h4>✅ Después</h4>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/zona1-despues.png" alt="Zona 1 – Después"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/zona2-despues.png" alt="Zona 2 – Después"></div>
+                    <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/zona3-despues.png" alt="Zona 3 – Después"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Gráficos de Encuesta -->
+    <div class="modal-overlay" id="modal-graficos">
+        <div class="modal-box wide">
+            <button class="close" onclick="cerrarModal('modal-graficos')">&times;</button>
+            <h3>📊 Resultados de Encuestas (Gráficos)</h3>
+            <div class="graficos-grid">
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/grafico1.png" alt="Gráfico 1"></div>
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/grafico2.png" alt="Gráfico 2"></div>
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/grafico3.png" alt="Gráfico 3"></div>
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/grafico4.png" alt="Gráfico 4"></div>
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/grafico5.png" alt="Gráfico 5"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Diagrama de Flujo -->
+    <div class="modal-overlay" id="modal-flujo">
+        <div class="modal-box wide">
+            <button class="close" onclick="cerrarModal('modal-flujo')">&times;</button>
+            <h3>🔄 Diagrama de Flujo de Gestión de Residuos</h3>
+            <div class="img-fixed" style="height: auto; aspect-ratio: 16/9; max-height: 60vh;">
+                <img src="https://adrianchavezhuaman.github.io/finalproyectog04/flujo.png" alt="Diagrama de flujo" style="width:100%; height:100%; object-fit:contain;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Más imágenes de alumnos -->
+    <div class="modal-overlay" id="modal-mas-alumnos">
+        <div class="modal-box wide">
+            <button class="close" onclick="cerrarModal('modal-mas-alumnos')">&times;</button>
+            <h3>📸 Estudiantes en acción</h3>
+            <div class="graficos-grid">
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/alumno1.png" alt="Alumno 1"></div>
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/alumno2.png" alt="Alumno 2"></div> 
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/alumno3.png" alt="Alumno 3"></div>
+                <div class="img-fixed"><img src="https://adrianchavezhuaman.github.io/finalproyectog04/alumno4.png" alt="Alumno 4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Conclusiones Detalle -->
+    <div class="modal-overlay" id="modal-conclusiones-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-conclusiones-detalle')">&times;</button>
+            <h3>✅ Reflexión Final</h3>
+            <p>El proyecto demostró que la participación comunitaria es clave para el éxito de iniciativas ambientales. Los estudiantes no solo mejoraron su entorno, sino que desarrollaron habilidades de liderazgo y trabajo en equipo.</p>
+            <p>Se recomienda establecer un plan de mantenimiento a largo plazo con la participación de todos los actores y buscar alianzas con el municipio para garantizar la sostenibilidad.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Recomendaciones Detalle -->
+    <div class="modal-overlay" id="modal-recomendaciones-detalle">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-recomendaciones-detalle')">&times;</button>
+            <h3>💡 Recomendaciones Ampliadas</h3>
+            <ul>
+                <li><strong>Mantenimiento:</strong> Crear un comité ecológico estudiantil con rotación semanal y capacitación en riego y cuidado.</li>
+                <li><strong>Educación:</strong> Incluir el cuidado de las áreas verdes en el plan curricular de ciencias y formación ciudadana.</li>
+                <li><strong>Participación:</strong> Involucrar a padres de familia en jornadas de mantenimiento y celebración de logros.</li>
+                <li><strong>Escalabilidad:</strong> Identificar nuevos espacios dentro del colegio para futuras ampliaciones y replicar el modelo en otras instituciones.</li>
+                <li><strong>Alianzas:</strong> Gestionar apoyo de municipalidades, ONGs y empresas locales para recursos y asesoría técnica.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal: Integrantes -->
+    <div class="modal-overlay" id="modal-integrantes">
+        <div class="modal-box">
+            <button class="close" onclick="cerrarModal('modal-integrantes')">&times;</button>
+            <h3>👥 Integrantes del Grupo 4</h3>
+            <div class="integrantes-grid">
+                <div class="integrante">
+                    <div class="foto"><span>TB</span></div>
+                    <div class="nombre">Treicy Berrospi</div>
+                </div>
+                <div class="integrante">
+                    <div class="foto"><span>ZB</span></div>
+                    <div class="nombre">Zinadyn Borda</div>
+                </div>
+                <div class="integrante">
+                    <div class="foto"><span>MC</span></div>
+                    <div class="nombre">Mayra Calle</div>
+                </div>
+                <div class="integrante">
+                    <div class="foto"><span>AC</span></div>
+                    <div class="nombre">Adrian Chávez</div>
+                </div>
+                <div class="integrante">
+                    <div class="foto"><span>JV</span></div>
+                    <div class="nombre">Jesús Vargas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function cerrarModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+        const buttons = document.querySelectorAll('.nav-btn');
+        const panels = document.querySelectorAll('.panel');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                buttons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const panelId = 'panel-' + this.dataset.panel;
+                panels.forEach(p => p.classList.remove('active'));
+                document.getElementById(panelId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
